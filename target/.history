@@ -1,0 +1,51 @@
+compile
+exit
+compile
+run tests/test1.txt --ast
+run --ast tests/test1.txt
+run tests/test1.txt
+exit
+compile
+run
+run tests/test1.txt --token
+run tests/test1.txt --tokens
+exit
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+run tests/test1.txt --tokens
+compile
+run tests/test1.txt --tokens
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+run tests/test1.txt --tokens
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+exit
