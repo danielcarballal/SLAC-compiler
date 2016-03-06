@@ -1,9 +1,10 @@
 method Main() : Int = {
    var i: Int;
-   var j: Int
+   var j: Int;
    
+   //Now for the expressions
    i = 0;
    j = 3;
    println(i + j);
-   2 * i + j;
+   2 * i + j
 }
