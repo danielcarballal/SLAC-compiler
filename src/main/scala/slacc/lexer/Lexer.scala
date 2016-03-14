@@ -21,7 +21,6 @@ object Lexer extends Pipeline[File, Iterator[Token]] {
     }
     def nextChar(): Char = {
       currentChar = source.next
-      // println("Position updated to " + source.pos)
       currentChar
     }
 
@@ -34,7 +33,6 @@ object Lexer extends Pipeline[File, Iterator[Token]] {
       }
 
       def next = {
-        // println("Cur char is " + curChar)
         var position = source.pos; //Read before so that position is always start of literal
         if(!hasNext){
           current = new Token(EOF);
@@ -151,6 +149,8 @@ object Lexer extends Pipeline[File, Iterator[Token]] {
           case '\n' =>
             nextChar; next;
           case ' ' =>
+            nextChar; next;
+          case '\t' =>
             nextChar; next;
           case _ => println("UNEXPECTED CHARECTER " + curChar); nextChar(); next;
         }

@@ -7,7 +7,6 @@ import lexer._
 import ast._
 
 object Main {
-
   def processOptions(args: Array[String]): Context = {
 
     val reporter = new Reporter()
@@ -67,7 +66,7 @@ object Main {
 
   def main(args: Array[String]) {
     val ctx = processOptions(args)
-
+    println(ctx)
     if (ctx.doTokens) {
       val iter = Lexer.run(ctx)(ctx.files.head)
       while (iter.hasNext) {
@@ -77,6 +76,7 @@ object Main {
     } else if (ctx.doPrintMain) {
       val pipeline = Lexer andThen Parser
       val ast = pipeline.run(ctx)(ctx.files.head)
+      println(ast)
       println(Printer(ast))
     } else if (ctx.doAST) {
       val pipeline = Lexer andThen Parser

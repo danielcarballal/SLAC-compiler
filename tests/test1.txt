@@ -1,3 +1,23 @@
+/*
+class Dog{
+	var bark: String;
+	var name: String;
+	var age: Int;
+	var houses: Int[];
+
+	method getAge() : Int = {
+		self.age()
+	}
+
+	method changeName(name: String) : Int = {
+		self.name = name;
+		age
+
+	}
+}
+*/
+
+
 method Main() : Int = {
    var i: Int;
    var j: Int;

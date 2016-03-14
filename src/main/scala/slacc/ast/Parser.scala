@@ -39,11 +39,11 @@ object Parser extends Pipeline[Iterator[Token], Program] {
 
     def parseGoal: Program = {
 
-      println("START PARSING " + currentToken.kind);
       var classlist: List[ClassDecl] = Nil
       while(currentToken.kind == CLASS){ classlist = classlist :+ classdefinition; readToken; }
       var mainmeth = mainmethoddelceration
-      Program(mainmeth, classlist)
+      var prog = Program(mainmeth, classlist)
+      prog
     }
 
     def classdefinition: ClassDecl ={
@@ -53,20 +53,20 @@ object Parser extends Pipeline[Iterator[Token], Program] {
       var id = identifier 
       var parent: Option[Identifier] = None
       if(currentToken.kind == LESSTHAN){
-        readToken
+        skip(LESSTHAN)
         skip(COLON)
         parent = Some(identifier)
       }
       skip(LBRACE)
       var varList: List[VarDecl] = Nil
-      while(currentToken.kind == VAR){ varList = varList :+ vardecleration }
+      while(currentToken.kind == VAR){ var temp = vardecleration; println("Temp is " + temp); varList = varList :+ temp }
+
       var methList: List[MethodDecl] = Nil
       while(currentToken.kind == METHOD){ methList = methList :+ methoddecleration}
       ClassDecl(id, parent, varList, methList );
     }
 
     def vardecleration: VarDecl = {
-      println("Var declaration " + currentToken.kind)
       //var Identifier : Type ;
       skip(VAR)
       var id = identifier
@@ -80,10 +80,9 @@ object Parser extends Pipeline[Iterator[Token], Program] {
     def mainmethoddelceration: MainMethod = {
       //method Identifier ( ( Identifier : Type ( , Identifier : Type )* )? ) : Type = { ( VarDeclaration )* Expression ( ; Expression )* }
       var md = methoddecleration
-      if(md.id == Identifier("Main")){
+      if(md.id.value == "Main") {
         return MainMethod(md)
       }
-      println("Error: Main expected")
       MainMethod(md)
 
     }
@@ -91,7 +90,6 @@ object Parser extends Pipeline[Iterator[Token], Program] {
     //method Identifier ( ( Identifier : Type ( , Identifier : Type )* )? ) : Type = { ( VarDeclaration )* Expression ( ; Expression )* }
     //MethodDecl(retType: TypeTree, id: Identifier, args: List[Formal], vars: List[VarDecl], exprs: List[ExprTree], retExpr: ExprTree)
     def methoddecleration: MethodDecl = {
-      println("START METHOD")
       skip(METHOD)
       var methname = identifier
       skip(LPAREN)
@@ -118,15 +116,13 @@ object Parser extends Pipeline[Iterator[Token], Program] {
 
       var varList: List[VarDecl] = Nil
       while(currentToken.kind == VAR) { var temp = vardecleration; varList = varList :+ temp; println("Adding variable decl " + vardecleration)}
-      println("Egg " + varList)
-      var latestExpr = expr 
+      var latestExpr: ExprTree = expr 
       var exprList: List[ExprTree] = List(latestExpr);
-      println("First expression of method " + latestExpr)
       while(currentToken.kind == SEMICOLON) { 
-        skip(SEMICOLON); latestExpr = expr; println("Adding expr " + latestExpr); exprList = exprList :+ latestExpr; 
+        skip(SEMICOLON); latestExpr = expr; exprList = exprList :+ latestExpr; 
       }
-      println("Finished expr, returning")
       skip(RBRACE)
+
       MethodDecl(retType, methname, args, varList, exprList, latestExpr)
     }
 
@@ -135,14 +131,18 @@ object Parser extends Pipeline[Iterator[Token], Program] {
 
       currentToken.kind match{
        case BOOLEAN =>
+        skip(BOOLEAN)
         typeRet = BooleanType()
        case STRING => 
+        skip(STRING)
         typeRet =  StringType()
        case UNIT =>
+        skip(UNIT)
         typeRet =  UnitType();
        case INT =>
-          readToken
+          skip(INT)
           if(currentToken.kind == LBRACKET){
+            skip(LBRACKET)
             skip(RBRACKET)
             typeRet =  IntArrayType()
           } else {
@@ -155,7 +155,6 @@ object Parser extends Pipeline[Iterator[Token], Program] {
     }
 
     def expr: ExprTree = {
-      println("Finding expression " + currentToken.toString)
       var ret: ExprTree = simpleexpr
       while(currentToken.kind == BANG){
         skip(BANG)
@@ -233,14 +232,13 @@ object Parser extends Pipeline[Iterator[Token], Program] {
     }
 
     def simpleexpr: ExprTree = {
-      println("Simple expr " + currentToken.kind)
       var retVal: ExprTree = True() //placeholder
       currentToken.kind match {
         case INTLITKIND =>
-          retVal = IntLit(555)
+          retVal = IntLit(getInt(currentToken))
           skip(INTLITKIND)
         case STRLITKIND =>
-          retVal = StringLit("Placeholder")
+          retVal = StringLit(getString(currentToken))
           skip(STRLITKIND)
         case TRUE =>
           skip(TRUE)
@@ -276,14 +274,20 @@ object Parser extends Pipeline[Iterator[Token], Program] {
           var condition : ExprTree = expr
           skip(RPAREN)
           var block : ExprTree = expr
-          retVal = If(condition, block)
+          var optionalElse : Option[ExprTree] = None
+          if(currentToken.kind == ELSE){
+            skip(ELSE)
+            optionalElse = Some(expr)
+          }
+          retVal = If(condition, block, optionalElse)
 
         case LBRACE =>
           skip(LBRACE)
           var listExpr: List[ExprTree] = Nil
           listExpr = listExpr :+ expr
-          while(currentToken.kind == SEMICOLON){ listExxpr = listExpr :+ expr }
+          while(currentToken.kind == SEMICOLON){ listExpr = listExpr :+ expr }
           skip(RBRACE)
+
           retVal = Block(listExpr)
 
         case WHILE =>
@@ -334,10 +338,25 @@ object Parser extends Pipeline[Iterator[Token], Program] {
     }
 
     def identifier: Identifier = {
-      println("Inside identifier ")
-      var id = Identifier(currentToken.toString)
+      var id = Identifier(getString(currentToken))
       skip(IDKIND)
       id
+    }
+
+    def getString(input: Token): String = {
+      println("Getting string of " + input)
+      input match {
+        case id: ID => println(id.value); id.value
+        case string: STRLIT => string.value
+        case _ => fatal("expected something that had a string value (probably building an ID), was " + currentToken.toString)
+      }
+    }
+
+    def getInt(input: Token): Integer = {
+      input match {
+        case number: INTLIT => number.value
+        case _ => fatal("expected something that had a number value")
+      }
     }
 
 

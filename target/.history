@@ -92,3 +92,97 @@ run tests/test1.txt --ast
 compile
 run tests/test1.txt --ast
 exit
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+run tests/test1.txt --tokens
+compile
+run tests/test1.txt --tokens
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+run tests/test1.txt --tokens
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+run tests/test1.txt --tokens
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+compile
+run tests/test1.txt --ast
+run tests/test1.txt --print
+compile
+run tests/test1.txt --print
+compile
+run tests/test1.txt --print
+compile
+run tests/test1.txt --print
+compile
+run tests/test1.txt --print
+exit
+run tests/test1.txt --print
+exit
+compile
+help compile
+inspect compile
+ls
+inspect compile:compile
+inspect compile:eclipseClassesManaged
+update
+compile
+inspect compile:eclipseClassesManaged
+inspect compile
+inspect compile:classDirectory
+test
+compile
+test
+compile
+run tests/test1.txt --print
+compile
+run tests/test1.txt --print
+compile
+run tests/test1.txt --print
+exit
