@@ -186,3 +186,17 @@ run tests/test1.txt --print
 compile
 run tests/test1.txt --print
 exit
+run tests/test1.txt --print
+run tests/99bottles.slac --print
+run tests/Simple.slac --print
+run tests/Simple.slac --tokens
+run tests/Simple.slac --tree
+run tests/Simple.slac --ast
+run tests/Simple.slac --print
+run tests/99bottles.slac --print
+run tests/99bottles.slac --ast
+run tests/99bottles.slac --print
+run tests/99bottles.slac --ast
+exit
+run tests/99bottles.slac --print
+exit

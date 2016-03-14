@@ -43,12 +43,12 @@ object Printer {
 			ret += Printer(retType)
 			ret += "={\n"
 			for(vara <- vars) { ret += Printer(vara); ret+= "\n"}
-			for(expr <- exprs) { ret += Printer(expr); ret+= ";\n"}
+			for(expr <- exprs) { ret += Printer(expr); ret+= ";\n"} // Method decl has at least one expr
 			ret = ret.dropRight(2)
 			ret += "\n}"
     	case Formal(tpe, id) =>
     		ret += Printer(id)
-    		ret += " = "
+    		ret += " : "
     		ret += Printer(tpe)
     	case IntArrayType() =>
     		ret = "Int[]"
@@ -61,34 +61,34 @@ object Printer {
     	case UnitType() =>
     		ret = "Unit"
     	case And(lhs, rhs) =>
-    		ret += Printer(lhs)
+    		ret += Printer(rhs)
     		ret += " && "
-    		ret += Printer(rhs)
-    	case Or(lhs, rhs) =>
     		ret += Printer(lhs)
-    		ret += " || "
+    	case Or(lhs, rhs) =>
     		ret += Printer(rhs)
+    		ret += " || "
+    		ret += Printer(lhs)
     	case Plus(lhs, rhs) =>
     		ret += Printer(lhs)
     		ret += " + "
     		ret += Printer(rhs)
-    	case Minus(rhs, lhs) =>
+    	case Minus(lhs, rhs) =>
     		ret += Printer(lhs)
     		ret += " - "
     		ret += Printer(rhs)
     	case Times(lhs, rhs) =>
-    		ret += Printer(lhs)
-    		ret += " * "
     		ret += Printer(rhs)
-    	case Div(rhs, lhs) =>
+    		ret += " * "
+    		ret += Printer(lhs)
+    	case Div(lhs, rhs) =>
     		ret += Printer(lhs)
     		ret += " / "
     		ret += Printer(rhs)
-    	case LessThan(rhs, lhs) =>
+    	case LessThan(lhs, rhs) =>
     		ret += Printer(lhs)
     		ret += " < "
     		ret += Printer(rhs)
-    	case Equals(rhs, lhs) =>
+    	case Equals(lhs, rhs) =>
     		ret += Printer(lhs)
     		ret += " == "
     		ret += Printer(rhs)
@@ -105,13 +105,18 @@ object Printer {
     		ret += "."
     		ret += Printer(meth)
     		ret += "("
-    		for(arg <- args) {ret += Printer(arg); ret += ",";} //TODO, eliminate last comma
-    		ret = ret.dropRight(1)
+    		if(!args.isEmpty){
+	    		for(arg <- args) {ret += Printer(arg); ret += ",";} //TODO, eliminate last comma
+	    		ret = ret.dropRight(1)
+    		}
+    		ret += ")"
 
     	case IntLit(value) =>
     		ret = value + ""
     	case StringLit(value) =>
-    		ret = value
+    		ret += "\""
+    		ret += value
+    		ret += "\""
     	case True() =>
     		ret = "True"
     	case False() =>
@@ -132,20 +137,18 @@ object Printer {
     		ret += "!"
     		ret += Printer(expr)
     	case Block(list) => 
-    		ret += "{"
-    		for(item <- list){ ret += item; ret += ";\n"}//Todo, eliminate last ;
+    		ret += "{\n"
+    		for(item <- list){ ret += Printer(item); ret += ";\n"}//Todo, eliminate last ;
     		ret = ret.dropRight(2) // Drop the last semicolon
     		ret += "\n}"
     	case If(expr, thn, els) =>
     		ret += "if("
     		ret += Printer(expr)
-    		ret += ")\n{\n"
+    		ret += ")\n"
 			ret += Printer(thn)
-			ret += "}\n"
 			if(els != None){
-				ret += "else{\n"
+				ret += "else"
 				ret += Printer(els.get)
-				ret += "}"
 			}
     	case While(cond, body) =>
     		ret += "while("
@@ -170,6 +173,7 @@ object Printer {
     		ret += " = "
     		ret += Printer(expr)
     	case _ =>
+    		println("So sorry, parsing error")
     }
     ret
   }

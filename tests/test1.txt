@@ -1,4 +1,3 @@
-/*
 class Dog{
 	var bark: String;
 	var name: String;
@@ -6,16 +5,15 @@ class Dog{
 	var houses: Int[];
 
 	method getAge() : Int = {
-		self.age()
+		self.age(firstarg)
 	}
 
 	method changeName(name: String) : Int = {
-		self.name = name;
+		self.name();
 		age
 
 	}
 }
-*/
 
 
 method Main() : Int = {

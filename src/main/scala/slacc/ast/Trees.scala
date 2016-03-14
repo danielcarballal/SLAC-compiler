@@ -48,7 +48,7 @@ object Trees {
   case class Not(expr: ExprTree) extends ExprTree
 
   case class Block(exprs: List[ExprTree]) extends ExprTree
-  case class If(expr: ExprTree, thn: ExprTree, els: Option[ExprTree]) extends ExprTree
+  case class If(expr: ExprTree, thn: ExprTree, els: Option[ExprTree]) extends ExprTree //thn stored as block
   case class While(cond: ExprTree, body: ExprTree) extends ExprTree
   case class Println(expr: ExprTree) extends ExprTree
   case class Assign(id: Identifier, expr: ExprTree) extends ExprTree

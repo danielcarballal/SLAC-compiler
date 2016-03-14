@@ -58,7 +58,7 @@ object Lexer extends Pipeline[File, Iterator[Token]] {
                 current = new Token(STRING);
               case "Int" =>
                 current = new Token(INT);
-              case "Boolean" =>
+              case "Bool" =>
                 current = new Token(BOOLEAN);
               case "While" =>
                 current = new Token(WHILE);
@@ -74,7 +74,7 @@ object Lexer extends Pipeline[File, Iterator[Token]] {
                 current = new Token(FALSE);
               case "self" =>
                 current = new Token(SELF);
-              case "New" =>
+              case "new" =>
                 current = new Token(NEW);
               case "println" =>
                 current = new Token(PRINTLN);
@@ -87,11 +87,18 @@ object Lexer extends Pipeline[File, Iterator[Token]] {
         else if(curChar().isDigit){
           var value: Int = curChar.toInt - '0'.toInt;
           while(nextChar.isDigit){
-            println("Value is " + value);
             value = value * 10
             value = value + curChar.toInt - '0'.toInt;
           }
           current = new INTLIT(value);
+        }
+        else if(curChar == '"'){
+          var buf = ""
+          while(nextChar != '"'){
+            buf += curChar.toString
+          }
+          nextChar
+          current = new STRLIT(buf)
         }
         else curChar() match { //Current 
           case '(' => nextChar(); current=new Token(LPAREN);
