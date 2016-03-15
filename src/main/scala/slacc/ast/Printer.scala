@@ -15,6 +15,7 @@ object Printer {
     			ret += "\n"
     		}
     		ret += Printer(main)
+    		ret += "\n"
     	case MainMethod(main) =>
     		ret += Printer(main)
     	case ClassDecl(id, parent, vars, methods) =>
