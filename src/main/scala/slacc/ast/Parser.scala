@@ -184,16 +184,17 @@ object Parser extends Pipeline[Iterator[Token], Program] {
     def expr3: ExprTree = {
       /* Comparison operators */
       var ret : ExprTree = expr4
-      println("Returning from expr 3 end: " + ret + " with current Token " + currentToken)
-      while(currentToken.kind == LESSTHAN){
-        skip(LESSTHAN)
-        var exprnew: ExprTree = expr4
-        ret = LessThan(ret, exprnew)
-      }
-      while(currentToken.kind == EQUALS){
-        skip(EQUALS)
-        var exprnew: ExprTree = expr4
-        ret = Equals(ret, exprnew)
+      while(currentToken.kind == LESSTHAN || currentToken.kind == EQUALS){
+        if(currentToken.kind == LESSTHAN){
+          skip(LESSTHAN)
+          var exprnew: ExprTree = expr4
+          ret = LessThan(ret, exprnew)
+        }
+        if(currentToken.kind == EQUALS){
+          skip(EQUALS)
+          var exprnew: ExprTree = expr4
+          ret = Equals(ret, exprnew)
+        }
       }
       println("RETURNING " + ret)
       ret 
@@ -201,30 +202,34 @@ object Parser extends Pipeline[Iterator[Token], Program] {
 
     def expr4 : ExprTree = {
       var ret : ExprTree = expr5
-      while(currentToken.kind == PLUS){
-        skip(PLUS)
-        var exprnew: ExprTree = expr5
-        ret = Plus(ret, exprnew)
-      }
-      while(currentToken.kind == MINUS){
-        skip(MINUS)
-        var exprnew: ExprTree = expr5
-        ret = Minus(ret, exprnew)
+      while(currentToken.kind == PLUS || currentToken.kind == MINUS){
+        if(currentToken.kind == PLUS){
+          skip(PLUS)
+          var exprnew: ExprTree = expr5
+          ret = Plus(ret, exprnew)
+        }
+        if(currentToken.kind == MINUS){
+          skip(MINUS)
+          var exprnew: ExprTree = expr5
+          ret = Minus(ret, exprnew)
+        }
       }
       ret 
     }
 
     def expr5 : ExprTree = {
       var ret : ExprTree = simpleexpr
-      while(currentToken.kind == TIMES){
-        skip(TIMES)
-        var exprnew: ExprTree = expr5
-        ret = Times(ret, exprnew)
-      }
-      while(currentToken.kind == DIV){
-        skip(DIV)
-        var exprnew: ExprTree = expr5
-        ret = Div(ret, exprnew)
+      while(currentToken.kind == TIMES || currentToken.kind == DIV){
+        if(currentToken.kind == TIMES){
+          skip(TIMES)
+          var exprnew: ExprTree = simpleexpr
+          ret = Times(ret, exprnew)
+        }
+        if(currentToken.kind == DIV){
+          skip(DIV)
+          var exprnew: ExprTree = simpleexpr
+          ret = Div(ret, exprnew)
+        }
       }
       ret
     }
