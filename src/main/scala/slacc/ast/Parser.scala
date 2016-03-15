@@ -161,10 +161,8 @@ object Parser extends Pipeline[Iterator[Token], Program] {
 
     def expr: ExprTree = {
       var ret: ExprTree = expr2
-      println("Returning from expr 2!! " + ret)
       while(currentToken.kind == OR){
         skip(OR)
-        println("In or, cur ret is " + ret)
         var exprnew: ExprTree = expr2
         ret = Or(ret, exprnew)
       }
@@ -196,7 +194,6 @@ object Parser extends Pipeline[Iterator[Token], Program] {
           ret = Equals(ret, exprnew)
         }
       }
-      println("RETURNING " + ret)
       ret 
     }
 
