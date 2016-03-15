@@ -246,3 +246,9 @@ run tests/GCD.slac --ast
 exit
 run tests/GCD.slac --print
 exit
+compile
+run tests/GCD.slac --print
+run tests/GCD.slac --ast
+run tests/ComplexNumbers.slac --ast
+run tests/DrawStuff.slac --ast
+exit

@@ -89,7 +89,6 @@ object Parser extends Pipeline[Iterator[Token], Program] {
     //MethodDecl(retType: TypeTree, id: Identifier, args: List[Formal], vars: List[VarDecl], exprs: List[ExprTree], retExpr: ExprTree)
     def methoddecleration: MethodDecl = {
       skip(METHOD)
-      println("Starting method " + currentToken)
       var methname = identifier
       skip(LPAREN)
       var args: List[Formal] = Nil
@@ -158,90 +157,74 @@ object Parser extends Pipeline[Iterator[Token], Program] {
       typeRet
     }
 
+
+
     def expr: ExprTree = {
-      var ret: ExprTree = True() //Placeholder
-      while(currentToken.kind == BANG){
-        skip(BANG)
-        var exprnew: ExprTree = expr
-        println("ENDED EXPR")
-        ret = Not(exprnew)
-        return ret
+      var ret: ExprTree = expr2
+      println("Returning from expr 2!! " + ret)
+      while(currentToken.kind == OR){
+        skip(OR)
+        println("In or, cur ret is " + ret)
+        var exprnew: ExprTree = expr2
+        ret = Or(ret, exprnew)
       }
-      ret = simpleexpr
-      while(currentToken.kind == LBRACKET){
-        skip(LBRACKET)
-        var exprnew: ExprTree = expr
-        skip(RBRACKET)
-        ret = ArrayRead(ret, exprnew)
-      }
-      while(currentToken.kind == DOT){
-        skip(DOT)
-        if(currentToken.kind == LENGTH){
-          skip(LENGTH)
-          ret = ArrayLength(ret)
-        }
-        else{
-          var id = identifier
-          skip(LPAREN)
-          var exprList: List[ExprTree] = Nil
-          if(currentToken.kind != RPAREN){ //At least one arg
-            exprList = exprList :+ expr
-            while(currentToken.kind == COMMA){
-              skip(COMMA)
-              exprList = exprList :+ expr
-            }
-          }
-  
-          skip(RPAREN)
-          ret = MethodCall(ret, id, exprList)
-        }
-      }
+      ret
+    }
 
-      /* Arithmatic operations */
-      while(currentToken.kind == TIMES){
-        skip(TIMES)
-        var exprnew: ExprTree = expr
-        ret = Times(ret, exprnew)
+    def expr2: ExprTree = {
+      var ret : ExprTree = expr3
+      while(currentToken.kind == AND){
+        skip(AND)
+        var exprnew: ExprTree = expr3
+        ret = And(ret, exprnew)
       }
-      while(currentToken.kind == DIV){
-        skip(DIV)
-        var exprnew: ExprTree = expr
-        ret = Div(ret, exprnew)
-      }
-      while(currentToken.kind == PLUS){
-        skip(PLUS)
-        var exprnew: ExprTree = expr
-        ret = Plus(ret, exprnew)
-      }
-      while(currentToken.kind == MINUS){
-        skip(MINUS)
-        var exprnew: ExprTree = expr
-        ret = Minus(ret, exprnew)
-      }
+      ret 
+    }
 
+    def expr3: ExprTree = {
       /* Comparison operators */
+      var ret : ExprTree = expr4
+      println("Returning from expr 3 end: " + ret + " with current Token " + currentToken)
       while(currentToken.kind == LESSTHAN){
         skip(LESSTHAN)
-        var exprnew: ExprTree = expr
+        var exprnew: ExprTree = expr4
         ret = LessThan(ret, exprnew)
       }
       while(currentToken.kind == EQUALS){
         skip(EQUALS)
-        println("In equals")
-        var exprnew: ExprTree = expr
-        println("Got " + exprnew)
+        var exprnew: ExprTree = expr4
         ret = Equals(ret, exprnew)
       }
-      while(currentToken.kind == AND){
-        skip(AND)
-        var exprnew: ExprTree = expr
-        ret = And(ret, exprnew)
+      println("RETURNING " + ret)
+      ret 
+    }
+
+    def expr4 : ExprTree = {
+      var ret : ExprTree = expr5
+      while(currentToken.kind == PLUS){
+        skip(PLUS)
+        var exprnew: ExprTree = expr5
+        ret = Plus(ret, exprnew)
       }
-      while(currentToken.kind == OR){
-        skip(OR)
-        println("In or, cur ret is " + ret)
-        var exprnew: ExprTree = expr
-        ret = Or(ret, exprnew)
+      while(currentToken.kind == MINUS){
+        skip(MINUS)
+        var exprnew: ExprTree = expr5
+        ret = Minus(ret, exprnew)
+      }
+      ret 
+    }
+
+    def expr5 : ExprTree = {
+      var ret : ExprTree = simpleexpr
+      while(currentToken.kind == TIMES){
+        skip(TIMES)
+        var exprnew: ExprTree = expr5
+        ret = Times(ret, exprnew)
+      }
+      while(currentToken.kind == DIV){
+        skip(DIV)
+        var exprnew: ExprTree = expr5
+        ret = Div(ret, exprnew)
       }
       ret
     }
@@ -327,6 +310,10 @@ object Parser extends Pipeline[Iterator[Token], Program] {
           skip(RPAREN)
           retVal = Strof(newexpr)
 
+        case BANG =>
+          skip(BANG)
+          var exprnew: ExprTree = simpleexpr
+          retVal = Not(exprnew)
         case IDKIND =>
           var id = identifier
           if(currentToken.kind == EQSIGN){
@@ -352,8 +339,41 @@ object Parser extends Pipeline[Iterator[Token], Program] {
           case _ =>
             fatal("Expected expression, instead got " + currentToken.toString)
       }
-      println("Returning simple expr " + retVal)
+      retVal = exprfollow(retVal)
       retVal
+    }
+
+    def exprfollow(exprIn : ExprTree) : ExprTree = {
+        var ret : ExprTree = exprIn
+        while(currentToken.kind == LBRACKET){
+          skip(LBRACKET)
+          var exprnew: ExprTree = expr
+          skip(RBRACKET)
+          ret = exprfollow(ArrayRead(exprIn, exprnew))
+        }
+        while(currentToken.kind == DOT){
+          skip(DOT)
+          if(currentToken.kind == LENGTH){
+            skip(LENGTH)
+            ret = exprfollow(ArrayLength(exprIn))
+          }
+          else{
+            var id = identifier
+            skip(LPAREN)
+            var exprList: List[ExprTree] = Nil
+            if(currentToken.kind != RPAREN){ //At least one arg
+              exprList = exprList :+ expr
+              while(currentToken.kind == COMMA){
+                skip(COMMA)
+                exprList = exprList :+ expr
+              }
+            }
+    
+            skip(RPAREN)
+            ret = exprfollow(MethodCall(ret, id, exprList))
+          }
+        }
+        ret
     }
 
     def identifier: Identifier = {
