@@ -40,7 +40,7 @@ object Parser extends Pipeline[Iterator[Token], Program] {
     def parseGoal: Program = {
 
       var classlist: List[ClassDecl] = Nil
-      while(currentToken.kind == CLASS){ classlist = classlist :+ classdefinition; readToken; }
+      while(currentToken.kind == CLASS){ classlist = classlist :+ classdefinition; }
       var mainmeth = mainmethoddelceration
       var prog = Program(mainmeth, classlist)
       prog
@@ -62,7 +62,8 @@ object Parser extends Pipeline[Iterator[Token], Program] {
       while(currentToken.kind == VAR){ var temp = vardecleration; varList = varList :+ temp }
 
       var methList: List[MethodDecl] = Nil
-      while(currentToken.kind == METHOD){ methList = methList :+ methoddecleration}
+      while(currentToken.kind == METHOD){var m = methoddecleration; methList = methList :+ m; }
+      skip(RBRACE)
       ClassDecl(id, parent, varList, methList );
     }
 
@@ -80,9 +81,6 @@ object Parser extends Pipeline[Iterator[Token], Program] {
     def mainmethoddelceration: MainMethod = {
       //method Identifier ( ( Identifier : Type ( , Identifier : Type )* )? ) : Type = { ( VarDeclaration )* Expression ( ; Expression )* }
       var md = methoddecleration
-      if(md.id.value == "Main") {
-        return MainMethod(md)
-      }
       MainMethod(md)
 
     }
@@ -91,6 +89,7 @@ object Parser extends Pipeline[Iterator[Token], Program] {
     //MethodDecl(retType: TypeTree, id: Identifier, args: List[Formal], vars: List[VarDecl], exprs: List[ExprTree], retExpr: ExprTree)
     def methoddecleration: MethodDecl = {
       skip(METHOD)
+      println("Starting method " + currentToken)
       var methname = identifier
       skip(LPAREN)
       var args: List[Formal] = Nil
@@ -114,12 +113,15 @@ object Parser extends Pipeline[Iterator[Token], Program] {
 
       skip(LBRACE)
 
+      /* TODO FIX FIX */
       var varList: List[VarDecl] = Nil
       while(currentToken.kind == VAR) {varList = varList :+ vardecleration;}
       var latestExpr: ExprTree = expr 
-      var exprList: List[ExprTree] = List(latestExpr);
-      while(currentToken.kind == SEMICOLON) { 
-        skip(SEMICOLON); latestExpr = expr; exprList = exprList :+ latestExpr; 
+      var exprList: List[ExprTree] = Nil
+      while(currentToken.kind == SEMICOLON) {
+        skip(SEMICOLON);
+        exprList = exprList :+ latestExpr;
+        latestExpr = expr;
       }
       skip(RBRACE)
 
@@ -148,19 +150,24 @@ object Parser extends Pipeline[Iterator[Token], Program] {
           } else {
             typeRet = IntType()
           }
+        case IDKIND =>
+          typeRet = identifier
         case _ =>
-          println(currentToken + " is not a valid type!")
+          fatal(currentToken + " is not a valid type!")
       }
       typeRet
     }
 
     def expr: ExprTree = {
-      var ret: ExprTree = simpleexpr
+      var ret: ExprTree = True() //Placeholder
       while(currentToken.kind == BANG){
         skip(BANG)
         var exprnew: ExprTree = expr
+        println("ENDED EXPR")
         ret = Not(exprnew)
-      }      
+        return ret
+      }
+      ret = simpleexpr
       while(currentToken.kind == LBRACKET){
         skip(LBRACKET)
         var exprnew: ExprTree = expr
@@ -171,11 +178,9 @@ object Parser extends Pipeline[Iterator[Token], Program] {
         skip(DOT)
         if(currentToken.kind == LENGTH){
           skip(LENGTH)
-          var exprnew: ExprTree = expr
           ret = ArrayLength(ret)
         }
         else{
-          println("Dot token is " + currentToken)
           var id = identifier
           skip(LPAREN)
           var exprList: List[ExprTree] = Nil
@@ -186,7 +191,6 @@ object Parser extends Pipeline[Iterator[Token], Program] {
               exprList = exprList :+ expr
             }
           }
-          println(exprList)
   
           skip(RPAREN)
           ret = MethodCall(ret, id, exprList)
@@ -223,7 +227,9 @@ object Parser extends Pipeline[Iterator[Token], Program] {
       }
       while(currentToken.kind == EQUALS){
         skip(EQUALS)
+        println("In equals")
         var exprnew: ExprTree = expr
+        println("Got " + exprnew)
         ret = Equals(ret, exprnew)
       }
       while(currentToken.kind == AND){
@@ -233,6 +239,7 @@ object Parser extends Pipeline[Iterator[Token], Program] {
       }
       while(currentToken.kind == OR){
         skip(OR)
+        println("In or, cur ret is " + ret)
         var exprnew: ExprTree = expr
         ret = Or(ret, exprnew)
       }
@@ -259,7 +266,7 @@ object Parser extends Pipeline[Iterator[Token], Program] {
           retVal = Self()
         case LPAREN =>
           skip(LPAREN)
-          expr
+          retVal = expr
           skip(RPAREN)
 
         case NEW =>
@@ -281,7 +288,7 @@ object Parser extends Pipeline[Iterator[Token], Program] {
           skip(LPAREN)
           var condition : ExprTree = expr
           skip(RPAREN)
-          var block : ExprTree = expr
+          var block : ExprTree = expr //Might be block or expression?
           var optionalElse : Option[ExprTree] = None
           if(currentToken.kind == ELSE){
             skip(ELSE)
@@ -293,7 +300,7 @@ object Parser extends Pipeline[Iterator[Token], Program] {
           skip(LBRACE)
           var listExpr: List[ExprTree] = Nil
           listExpr = listExpr :+ expr
-          while(currentToken.kind == SEMICOLON){ listExpr = listExpr :+ expr }
+          while(currentToken.kind == SEMICOLON){ skip(SEMICOLON); listExpr = listExpr :+ expr }
           skip(RBRACE)
 
           retVal = Block(listExpr)
@@ -330,18 +337,22 @@ object Parser extends Pipeline[Iterator[Token], Program] {
             skip(LBRACKET)
             var index = expr
             skip(RBRACKET)
-            skip(EQSIGN) 
-            var set = expr
-            retVal = ArrayAssign(id, index, set)
+            if(currentToken.kind == EQSIGN)
+            {
+              skip(EQSIGN) 
+              var set = expr
+              retVal = ArrayAssign(id, index, set)
+            }
+            else{
+              retVal = ArrayRead(id, index)
+            }
           } else{ //Is simply ID
             retVal = id
           }
-
-
-        case _ =>
-          println("Expected an expression!!")
-
+          case _ =>
+            fatal("Expected expression, instead got " + currentToken.toString)
       }
+      println("Returning simple expr " + retVal)
       retVal
     }
 

@@ -200,3 +200,49 @@ run tests/99bottles.slac --ast
 exit
 run tests/99bottles.slac --print
 exit
+run tests/BinarySearch.slac --print
+exit
+run tests/BinarySearch.slac --print
+compile
+run tests/BinarySearch.slac --print
+run tests/99bottles.slac --print
+run tests/99bottles.slac --ast
+run tests/99bottles.slac --tokens
+run tests/99bottles.slac --ast
+run tests/99bottles.slac --print
+run tests/99bottles.slac --ast
+run tests/99bottles.slac --print
+run tests/99bottles.slac --ast
+run tests/99bottles.slac --print
+run tests/BinarySearch.slac --print
+run tests/99bottles.slac --print
+run tests/BinarySearch.slac --print
+run tests/99bottles.slac --print
+run tests/BinarySearch.slac --print
+run tests/Calender.slac --print
+run tests/Calendar.slac --print
+run tests/99bottles.slac --print
+run tests/Calendar.slac --print
+exit
+run tests/ComplexNumbers.slac --print
+run tests/XXFail02.slac --print
+run tests/XXFailO2.slac --print
+run tests/GCD.slac --print
+run tests/ComplexNumbers.slac --print
+run tests/GCD.slac --print
+exit
+run tests/ComplexNumbers.slac --print >> cn.txt
+exit
+run tests/ComplexNumbers.slac --print
+exit
+run tests/ComplexNumbers.slac --print
+exit
+run tests/ComplexNumbers.slac --print
+run tests/GCD.slac --print
+exit
+run tests/GCD.slac --print
+exit
+run tests/GCD.slac --ast
+exit
+run tests/GCD.slac --print
+exit

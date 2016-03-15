@@ -40,7 +40,7 @@ object Lexer extends Pipeline[File, Iterator[Token]] {
         else if(curChar().isLetter)
         {
           var buf: String = ""
-          while((curChar().isLetter || curChar().isDigit))
+          while(curChar().isLetter || curChar().isDigit || curChar == '_')
           {
             buf += curChar();
             nextChar();
@@ -60,7 +60,7 @@ object Lexer extends Pipeline[File, Iterator[Token]] {
                 current = new Token(INT);
               case "Bool" =>
                 current = new Token(BOOLEAN);
-              case "While" =>
+              case "while" =>
                 current = new Token(WHILE);
               case "if" =>
                 current = new Token(IF);

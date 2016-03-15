@@ -38,13 +38,16 @@ object Printer {
     		ret += "method "
     		ret += Printer(id)
     		ret += "("
-    		for(arg <- args){ ret += Printer(arg) }
+    		if(!args.isEmpty){
+    			for(arg <- args){ ret += Printer(arg); ret += ", " }
+    			ret = ret.dropRight(2) // Eliminate last comma and space
+    		}
     		ret += "):"
 			ret += Printer(retType)
 			ret += "={\n"
 			for(vara <- vars) { ret += Printer(vara); ret+= "\n"}
 			for(expr <- exprs) { ret += Printer(expr); ret+= ";\n"} // Method decl has at least one expr
-			ret = ret.dropRight(2)
+			ret += Printer(retExpr)
 			ret += "\n}"
     	case Formal(tpe, id) =>
     		ret += Printer(id)
@@ -61,13 +64,13 @@ object Printer {
     	case UnitType() =>
     		ret = "Unit"
     	case And(lhs, rhs) =>
-    		ret += Printer(rhs)
+    		ret += Printer(lhs)
     		ret += " && "
-    		ret += Printer(lhs)
-    	case Or(lhs, rhs) =>
     		ret += Printer(rhs)
-    		ret += " || "
+    	case Or(lhs, rhs) =>
     		ret += Printer(lhs)
+    		ret += " || "
+    		ret += Printer(rhs)
     	case Plus(lhs, rhs) =>
     		ret += Printer(lhs)
     		ret += " + "
@@ -77,9 +80,9 @@ object Printer {
     		ret += " - "
     		ret += Printer(rhs)
     	case Times(lhs, rhs) =>
-    		ret += Printer(rhs)
-    		ret += " * "
     		ret += Printer(lhs)
+    		ret += " * "
+    		ret += Printer(rhs)
     	case Div(lhs, rhs) =>
     		ret += Printer(lhs)
     		ret += " / "
@@ -135,7 +138,9 @@ object Printer {
     		ret += "()"
     	case Not(expr) =>
     		ret += "!"
+    		ret += "("
     		ret += Printer(expr)
+    		ret += ")"
     	case Block(list) => 
     		ret += "{\n"
     		for(item <- list){ ret += Printer(item); ret += ";\n"}//Todo, eliminate last ;
@@ -146,16 +151,16 @@ object Printer {
     		ret += Printer(expr)
     		ret += ")\n"
 			ret += Printer(thn)
+			ret += "\n"
 			if(els != None){
-				ret += "else"
+				ret += "else\n"
 				ret += Printer(els.get)
 			}
     	case While(cond, body) =>
     		ret += "while("
     		ret += Printer(cond)
-    		ret += ")\n{\n"
+    		ret += ")\n"
 			ret += Printer(body)
-			ret += "\n}\n"
     	case Println(expr) =>
     		ret += "println("
     		ret += Printer(expr)
@@ -173,7 +178,7 @@ object Printer {
     		ret += " = "
     		ret += Printer(expr)
     	case _ =>
-    		println("So sorry, parsing error")
+    		println("So sorry, printing error on " + t)
     }
     ret
   }
