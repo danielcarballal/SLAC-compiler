@@ -1,14 +1,14 @@
 package slacc
 
 import utils._
-import java.io.File
+import java.io._
 
 import lexer._
 import ast._
 
 object Main {
+  var doPP : Boolean = false 
   def processOptions(args: Array[String]): Context = {
-
     val reporter = new Reporter()
     var ctx = Context(reporter = reporter)
 
@@ -32,6 +32,9 @@ object Main {
       case "-d" :: out :: args =>
         ctx = ctx.copy(outDir = Some(new File(out)))
         processOption(args)
+
+      case "--prettyprint" :: args =>
+        doPP = true
 
       case f :: args =>
         ctx = ctx.copy(files = new File(f) :: ctx.files)
@@ -80,7 +83,20 @@ object Main {
       val pipeline = Lexer andThen Parser
       val ast = pipeline.run(ctx)(ctx.files.head)
       println(ast)
-    } else {
+    } else if(doPP){ //hehhehehehe
+      val pipeline = Lexer andThen Parser
+      val ast = pipeline.run(ctx)(ctx.files.head)
+      val firstPrint = Printer(ast)
+
+      val pipeline2 = Lexer andThen Parser
+      new PrintWriter("firstPrintFile") { write(firstPrint); close }
+      var firstPrintFile : File = new File("firstPrintFile")
+      val secondast = pipeline2.run(ctx)(firstPrintFile)
+      println(ast)
+      println(secondast)
+      println(firstPrint == Printer(secondast))
+    }
+    else {
       ???
     }
   }

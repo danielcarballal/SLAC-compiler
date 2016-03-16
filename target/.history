@@ -254,3 +254,9 @@ run tests/DrawStuff.slac --ast
 exit
 run tests/DrawStuff.slac --ast
 exit
+run tests/DrawStuff.slac --ast
+run tests/DrawStuff.slac --prettyprint
+exit
+compile
+run tests/DrawStuff.slac --print
+exit

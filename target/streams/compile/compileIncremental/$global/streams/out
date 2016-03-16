@@ -2,21 +2,21 @@
 [0m[[0mdebug[0m] [0mInitial source changes: [0m
 [0m[[0mdebug[0m] [0m	removed:Set()[0m
 [0m[[0mdebug[0m] [0m	added: Set()[0m
-[0m[[0mdebug[0m] [0m	modified: Set(/Users/danielcarballal/Documents/Classes/Compiler Construction/parser/labs-2-and-3-carba-nkap/src/main/scala/slacc/ast/Parser.scala)[0m
+[0m[[0mdebug[0m] [0m	modified: Set(/Users/danielcarballal/Documents/Classes/Compiler Construction/parser/labs-2-and-3-carba-nkap/src/main/scala/slacc/ast/Printer.scala)[0m
 [0m[[0mdebug[0m] [0mInvalidated products: Set()[0m
 [0m[[0mdebug[0m] [0mExternal API changes: API Changes: Set()[0m
 [0m[[0mdebug[0m] [0mModified binary dependencies: Set()[0m
-[0m[[0mdebug[0m] [0mInitial directly invalidated sources: Set(/Users/danielcarballal/Documents/Classes/Compiler Construction/parser/labs-2-and-3-carba-nkap/src/main/scala/slacc/ast/Parser.scala)[0m
+[0m[[0mdebug[0m] [0mInitial directly invalidated sources: Set(/Users/danielcarballal/Documents/Classes/Compiler Construction/parser/labs-2-and-3-carba-nkap/src/main/scala/slacc/ast/Printer.scala)[0m
 [0m[[0mdebug[0m] [0m[0m
 [0m[[0mdebug[0m] [0mSources indirectly invalidated by:[0m
 [0m[[0mdebug[0m] [0m	product: Set()[0m
 [0m[[0mdebug[0m] [0m	binary dep: Set()[0m
 [0m[[0mdebug[0m] [0m	external source: Set()[0m
-[0m[[0mdebug[0m] [0mAll initially invalidated sources: Set(/Users/danielcarballal/Documents/Classes/Compiler Construction/parser/labs-2-and-3-carba-nkap/src/main/scala/slacc/ast/Parser.scala)[0m
+[0m[[0mdebug[0m] [0mAll initially invalidated sources: Set(/Users/danielcarballal/Documents/Classes/Compiler Construction/parser/labs-2-and-3-carba-nkap/src/main/scala/slacc/ast/Printer.scala)[0m
 [0m[[0minfo[0m] [0mCompiling 1 Scala source to /Users/danielcarballal/Documents/Classes/Compiler Construction/parser/labs-2-and-3-carba-nkap/target/scala-2.11/classes...[0m
 [0m[[0mdebug[0m] [0mGetting compiler-interface from component compiler for Scala 2.11.7[0m
 [0m[[0mdebug[0m] [0mGetting compiler-interface from component compiler for Scala 2.11.7[0m
-[0m[[0mdebug[0m] [0mRunning cached compiler 698247c8, interfacing (CompilerInterface) with Scala compiler version 2.11.7[0m
+[0m[[0mdebug[0m] [0mRunning cached compiler 4a56f019, interfacing (CompilerInterface) with Scala compiler version 2.11.7[0m
 [0m[[0mdebug[0m] [0mCalling Scala compiler with arguments  (CompilerInterface):[0m
 [0m[[0mdebug[0m] [0m	-deprecation[0m
 [0m[[0mdebug[0m] [0m	-unchecked[0m
@@ -24,7 +24,7 @@
 [0m[[0mdebug[0m] [0m	/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre/classes:/Users/danielcarballal/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.11.7.jar[0m
 [0m[[0mdebug[0m] [0m	-classpath[0m
 [0m[[0mdebug[0m] [0m	/Users/danielcarballal/Documents/Classes/Compiler Construction/parser/labs-2-and-3-carba-nkap/target/scala-2.11/classes[0m
-[0m[[0mdebug[0m] [0mScala compilation took 1.868771278 s[0m
+[0m[[0mdebug[0m] [0mScala compilation took 1.312692251 s[0m
 [0m[[0mdebug[0m] [0mNew invalidations:[0m
 [0m[[0mdebug[0m] [0m	Set()[0m
 [0m[[0mdebug[0m] [0mInitial set of included nodes: Set()[0m

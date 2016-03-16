@@ -3,6 +3,25 @@ package ast
 
 import Trees._
 
+object TabCounter {
+	var numTabs = 0
+
+	def printTabs(input : String) : String = {
+		var a = 0
+		var output : String = input
+		for(a <- 1 to numTabs){
+			output += "  "
+		}
+		output
+	}
+	def increaseTabs() = {
+		numTabs += 1
+	}
+	def decreaseTabs() = {
+		numTabs -= 1
+	}
+}
+
 object Printer {
   def apply(t: Tree): String = {
     var kind = t.getClass.getSimpleName
@@ -17,17 +36,25 @@ object Printer {
     		ret += Printer(main)
     		ret += "\n"
     	case MainMethod(main) =>
+    		ret = TabCounter.printTabs(ret)
+    		TabCounter.increaseTabs
     		ret += Printer(main)
+    		TabCounter.decreaseTabs
     	case ClassDecl(id, parent, vars, methods) =>
+    		ret = TabCounter.printTabs(ret)
     		ret += "class "
     		ret += Printer(id)
     		if(!parent.isEmpty){
     			ret += " <: "
     			ret += Printer(parent.get)
     		}
+    		ret = TabCounter.printTabs(ret);
     		ret += "{\n"
+    		TabCounter.increaseTabs
     		for(v <- vars) { ret += Printer(v); ret += "\n" }
     		for(m <- methods) { ret += Printer(m); ret += "\n"}
+    		TabCounter.decreaseTabs
+    		ret = TabCounter.printTabs(ret);
     		ret += "}"
     	case VarDecl(typeOf, id) =>
     		ret += "var "
@@ -36,6 +63,7 @@ object Printer {
     		ret += Printer(typeOf)
     		ret += ";"
     	case MethodDecl(retType, id, args, vars, exprs, retExpr) =>
+    		ret = TabCounter.printTabs(ret)
     		ret += "method "
     		ret += Printer(id)
     		ret += "("
@@ -46,9 +74,11 @@ object Printer {
     		ret += "):"
 			ret += Printer(retType)
 			ret += "={\n"
-			for(vara <- vars) { ret += Printer(vara); ret+= "\n"}
-			for(expr <- exprs) { ret += Printer(expr); ret+= ";\n"} // Method decl has at least one expr
+			TabCounter.increaseTabs
+			for(vara <- vars) { ret = TabCounter.printTabs(ret); ret += Printer(vara); ret+= "\n"}
+			for(expr <- exprs) { ret = TabCounter.printTabs(ret); ret += Printer(expr); ret+= ";\n"} // Method decl has at least one expr
 			ret += Printer(retExpr)
+			TabCounter.decreaseTabs
 			ret += "\n}"
     	case Formal(tpe, id) =>
     		ret += Printer(id)
@@ -144,24 +174,32 @@ object Printer {
     		ret += ")"
     	case Block(list) => 
     		ret += "{\n"
-    		for(item <- list){ ret += Printer(item); ret += ";\n"}//Todo, eliminate last ;
+    		TabCounter.increaseTabs
+    		for(item <- list){ ret = TabCounter.printTabs(ret); ret += Printer(item); ret += ";\n"}//Todo, eliminate last ;
     		ret = ret.dropRight(2) // Drop the last semicolon
+    		TabCounter.decreaseTabs
     		ret += "\n}"
     	case If(expr, thn, els) =>
+    		ret = TabCounter.printTabs(ret)
     		ret += "if("
     		ret += Printer(expr)
     		ret += ")\n"
+			TabCounter.increaseTabs
 			ret += Printer(thn)
 			ret += "\n"
 			if(els != None){
+				ret = TabCounter.printTabs(ret);
 				ret += "else\n"
 				ret += Printer(els.get)
 			}
+			TabCounter.decreaseTabs
     	case While(cond, body) =>
     		ret += "while("
     		ret += Printer(cond)
     		ret += ")\n"
+			TabCounter.increaseTabs
 			ret += Printer(body)
+			TabCounter.decreaseTabs
     	case Println(expr) =>
     		ret += "println("
     		ret += Printer(expr)
